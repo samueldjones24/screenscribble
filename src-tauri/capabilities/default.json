@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Grant the local main, overlay, and settings windows access to the core Tauri APIs used by the app.",
+  "windows": ["main", "overlay", "settings"],
+  "permissions": ["core:default"]
+}

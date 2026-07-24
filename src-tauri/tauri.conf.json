@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ScreenScribble",
+  "version": "0.1.0",
+  "identifier": "com.screenscribble.app",
+  "build": {
+    "beforeDevCommand": "node -e \"process.exit(0)\"",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ScreenScribble",
+        "width": 980,
+        "height": 760,
+        "minWidth": 720,
+        "minHeight": 520,
+        "resizable": true,
+        "transparent": false,
+        "alwaysOnTop": false,
+        "decorations": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "focus": false,
+        "center": true
+      },
+      {
+        "label": "overlay",
+        "title": "",
+        "transparent": true,
+        "alwaysOnTop": true,
+        "decorations": false,
+        "shadow": false,
+        "skipTaskbar": true,
+        "resizable": false,
+        "focus": false,
+        "visible": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

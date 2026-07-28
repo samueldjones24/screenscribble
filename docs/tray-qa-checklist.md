@@ -106,7 +106,7 @@ This checklist is for tray-first runtime validation.
 - Fresh app launch.
 - Toggle Draw Mode ON once.
 - Expected:
-  - `ScreenScribble: ON` notification appears on first toggle.
+  - `Draw Mode: ON` notification appears on first toggle.
 
 3. Tray fallback while Draw Mode is active
 - Turn Draw Mode ON.

@@ -2,6 +2,17 @@
   "name": "screenscribble",
   "private": true,
   "version": "0.1.0",
+  "description": "Transient desktop annotation overlay for demos, meetings, and screenshots.",
+  "license": "MIT",
+  "author": "ScreenScribble",
+  "homepage": "https://screenscribble.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/screenscribble/screenscribble"
+  },
+  "bugs": {
+    "url": "https://github.com/screenscribble/screenscribble/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
@@ -10,6 +21,7 @@
     "dev:all": "powershell -ExecutionPolicy Bypass -File ./scripts/start-dev.ps1",
     "test": "node --experimental-strip-types --test tests/**/*.test.ts",
     "build": "tsc -b && vite build",
+    "build:desktop": "tauri build --bundles nsis && powershell -ExecutionPolicy Bypass -File ./scripts/rename-installer.ps1",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",

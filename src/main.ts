@@ -24,6 +24,19 @@ interface NativeDiagnosticEventPayload {
   message: string;
 }
 
+interface ReleaseMetadata {
+  appName: string;
+  version: string;
+  buildNumber: string;
+  website: string;
+  supportUrl: string;
+  repositoryUrl: string;
+  license: string;
+  company: string;
+  description: string;
+  copyright: string;
+}
+
 interface SessionControlEventPayload {
   kind: 'clear_current_session' | 'shutdown';
 }
@@ -149,7 +162,7 @@ if (app) {
           const enabled = event.payload.enabled ?? !overlay.isEnabled();
           overlay.setEnabled(enabled);
 
-          const message = enabled ? 'ScreenScribble: ON' : 'ScreenScribble: OFF';
+          const message = enabled ? 'Draw Mode: ON' : 'Draw Mode: OFF';
           showNotification(message);
           log('info', `Showing notification: ${message}`);
           
@@ -246,7 +259,116 @@ if (app) {
     });
   } else {
     document.body.classList.add('control-window');
-    app.innerHTML = `
+    const isWelcomeView = forcedView === 'welcome';
+    const isAboutView = forcedView === 'about';
+
+    const loadReleaseMetadata = async (): Promise<ReleaseMetadata> => {
+      try {
+        return await invoke<ReleaseMetadata>('get_release_metadata');
+      } catch (error) {
+        log('warn', `Failed to load release metadata: ${String(error)}`);
+        return {
+          appName: 'ScreenScribble',
+          version: '0.1.0',
+          buildNumber: 'local',
+          website: 'https://screenscribble.app',
+          supportUrl: 'https://github.com/screenscribble/screenscribble/issues',
+          repositoryUrl: 'https://github.com/screenscribble/screenscribble',
+          license: 'MIT',
+          company: 'ScreenScribble',
+          description: 'Transient desktop annotation overlay for demos, meetings, and screenshots.',
+          copyright: 'Copyright (c) 2026 ScreenScribble',
+        };
+      }
+    };
+
+    if (isWelcomeView) {
+      app.innerHTML = `
+        <main class="dialog-shell">
+          <section class="dialog-card" aria-label="Welcome dialog">
+            <h1>Welcome to ScreenScribble</h1>
+            <p>Runs quietly from your system tray.</p>
+            <p>Press <strong>Ctrl + Alt + D</strong> to enter Draw Mode.</p>
+            <footer class="dialog-actions">
+              <button id="welcome-open-settings" class="control-button" type="button">Open Settings</button>
+              <button id="welcome-close" class="control-button" type="button">Close</button>
+            </footer>
+          </section>
+        </main>
+      `;
+
+      const completeFirstRun = async (): Promise<void> => {
+        await invoke('mark_first_run_complete');
+      };
+
+      const openSettingsButton = document.querySelector<HTMLButtonElement>('#welcome-open-settings');
+      const closeButton = document.querySelector<HTMLButtonElement>('#welcome-close');
+
+      openSettingsButton?.addEventListener('click', async () => {
+        await invoke('open_settings_window');
+        await completeFirstRun();
+        await currentWindow.hide();
+      });
+
+      closeButton?.addEventListener('click', async () => {
+        await completeFirstRun();
+        await currentWindow.hide();
+      });
+    } else if (isAboutView) {
+      app.innerHTML = `
+        <main class="dialog-shell">
+          <section class="dialog-card" aria-label="About dialog">
+            <h1>About ScreenScribble</h1>
+            <dl class="about-grid">
+              <dt>Version</dt>
+              <dd id="about-version">Loading…</dd>
+              <dt>Build</dt>
+              <dd id="about-build">Loading…</dd>
+              <dt>Website</dt>
+              <dd><a id="about-website" href="#" rel="noreferrer">Loading…</a></dd>
+              <dt>GitHub</dt>
+              <dd><a id="about-github" href="#" rel="noreferrer">Loading…</a></dd>
+              <dt>License</dt>
+              <dd id="about-license">Loading…</dd>
+            </dl>
+            <footer class="dialog-actions">
+              <button id="about-close" class="control-button" type="button">Close</button>
+            </footer>
+          </section>
+        </main>
+      `;
+
+      void loadReleaseMetadata().then((metadata) => {
+        const versionNode = document.querySelector<HTMLElement>('#about-version');
+        const buildNode = document.querySelector<HTMLElement>('#about-build');
+        const websiteNode = document.querySelector<HTMLAnchorElement>('#about-website');
+        const githubNode = document.querySelector<HTMLAnchorElement>('#about-github');
+        const licenseNode = document.querySelector<HTMLElement>('#about-license');
+
+        if (versionNode) {
+          versionNode.textContent = metadata.version;
+        }
+        if (buildNode) {
+          buildNode.textContent = metadata.buildNumber;
+        }
+        if (websiteNode) {
+          websiteNode.textContent = metadata.website;
+          websiteNode.href = metadata.website;
+        }
+        if (githubNode) {
+          githubNode.textContent = metadata.repositoryUrl;
+          githubNode.href = metadata.repositoryUrl;
+        }
+        if (licenseNode) {
+          licenseNode.textContent = metadata.license;
+        }
+      });
+
+      document.querySelector<HTMLButtonElement>('#about-close')?.addEventListener('click', async () => {
+        await currentWindow.hide();
+      });
+    } else {
+      app.innerHTML = `
       <main class="control-shell">
         <section class="control-panel">
           <header class="control-header">
@@ -262,7 +384,7 @@ if (app) {
               <button id="toggle-overlay" class="control-button" type="button">Pause Drawing</button>
               <button id="exit-application" class="control-button control-button-danger" type="button">Exit App</button>
             </div>
-            <p id="backend-diagnostic" class="hint">Backend diagnostic: waiting for native hook status…</p>
+            <p id="backend-diagnostic" class="hint">Backend diagnostic: active</p>
           </section>
 
           <section id="inline-settings" class="inline-settings-host" aria-label="Settings"></section>
@@ -309,9 +431,6 @@ if (app) {
         if (event.payload.kind === 'toggle_overlay' || event.payload.kind === 'pause_drawing') {
           overlayEnabled = event.payload.enabled ?? !overlayEnabled;
           updateOverlayStatus();
-          
-          // Sync backend controller state when keyboard hook events are processed
-          // This ensures tray notifications/tooltips update in sync with the overlay
           log('info', `Syncing input state after ${event.payload.kind}`);
           void invoke('sync_input_state').then(() => {
             log('info', 'Input state synced');
@@ -335,6 +454,7 @@ if (app) {
       });
     })();
 
-    updateOverlayStatus();
+      updateOverlayStatus();
+    }
   }
 }

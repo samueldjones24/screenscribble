@@ -20,6 +20,7 @@ pub struct SafetyHotkeyEvent {
     pub enabled: Option<bool>,
 }
 
+#[cfg(debug_assertions)]
 #[derive(Debug, Clone, Serialize)]
 pub struct InputDiagnosticEvent {
     pub stage: String,
@@ -40,10 +41,9 @@ static EVENT_SENDER: OnceLock<mpsc::Sender<HookEvent>> = OnceLock::new();
 
 #[cfg(windows)]
 mod windows_impl {
-    use super::{
-        HookEvent, InputDiagnosticEvent, MouseHookEvent, SafetyHotkeyEvent,
-        SessionControlHotkeyEvent, EVENT_SENDER,
-    };
+    use super::{HookEvent, MouseHookEvent, SafetyHotkeyEvent, SessionControlHotkeyEvent, EVENT_SENDER};
+    #[cfg(debug_assertions)]
+    use super::InputDiagnosticEvent;
     use crate::shortcut::{ShortcutManager, KeyBinding, ShortcutAction};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::mpsc;
@@ -170,20 +170,22 @@ mod windows_impl {
         #[cfg(not(debug_assertions))]
         {
             let _ = (app_handle, stage, message);
-            return;
         }
 
-        let event = InputDiagnosticEvent {
-            stage: stage.to_string(),
-            message: message.to_string(),
-        };
+        #[cfg(debug_assertions)]
+        {
+            let event = InputDiagnosticEvent {
+                stage: stage.to_string(),
+                message: message.to_string(),
+            };
 
-        if let Some(window) = app_handle.get_webview_window("main") {
-            let _ = window.emit("screen_scribble:diagnostic", event.clone());
-        }
+            if let Some(window) = app_handle.get_webview_window("main") {
+                let _ = window.emit("screen_scribble:diagnostic", event.clone());
+            }
 
-        if let Some(window) = app_handle.get_webview_window("overlay") {
-            let _ = window.emit("screen_scribble:diagnostic", event);
+            if let Some(window) = app_handle.get_webview_window("overlay") {
+                let _ = window.emit("screen_scribble:diagnostic", event);
+            }
         }
     }
 

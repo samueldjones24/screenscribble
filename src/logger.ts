@@ -5,7 +5,7 @@ function formatMessage(level: LogLevel, message: string): string {
 }
 
 export function log(level: LogLevel, message: string): void {
-  if (!import.meta.env.DEV && level === 'info') {
+  if (!import.meta.env.DEV && (level === 'debug' || level === 'info')) {
     return;
   }
 

@@ -15,6 +15,7 @@ const MENU_SESSION_TOGGLE_ID: &str = "tray_session_toggle";
 const MENU_DRAWING_MODE_TOGGLE_ID: &str = "tray_drawing_mode_toggle";
 const MENU_CLEAR_SESSION_ID: &str = "tray_clear_current_session";
 const MENU_OPEN_SETTINGS_ID: &str = "tray_open_settings";
+const MENU_OPEN_ABOUT_ID: &str = "tray_open_about";
 const MENU_EXIT_ID: &str = "tray_exit";
 
 #[derive(Clone, Serialize)]
@@ -255,6 +256,31 @@ impl ApplicationController {
         self.services.settings.open_settings_window(app)
     }
 
+    pub fn open_main_window_route(
+        &mut self,
+        app: &AppHandle<Wry>,
+        route: &str,
+        title: &str,
+        width: f64,
+        height: f64,
+    ) -> Result<(), String> {
+        let Some(window) = app.get_webview_window("main") else {
+            return Err("main window is not available".to_string());
+        };
+
+        let route_literal = route.replace('\\', "\\\\").replace('\'', "\\'");
+        let script = format!("window.location.hash = '{route_literal}';");
+        let _ = window.eval(&script);
+
+        let _ = window.set_title(title);
+        let _ = window.set_size(tauri::Size::Logical(tauri::LogicalSize::new(width, height)));
+        let _ = window.center();
+        let _ = window.show();
+        let _ = window.set_focus();
+
+        Ok(())
+    }
+
     pub fn toggle_pause_state(&mut self, app: &AppHandle<Wry>) -> bool {
         let paused = self.services.input.toggle_paused(app);
         self.state = if paused {
@@ -341,6 +367,9 @@ impl ApplicationController {
         let open_settings_item =
             MenuItem::with_id(app, MENU_OPEN_SETTINGS_ID, "Settings", true, None::<&str>)
                 .map_err(|error| format!("failed to create Settings menu item: {error}"))?;
+        let open_about_item =
+            MenuItem::with_id(app, MENU_OPEN_ABOUT_ID, "About", true, None::<&str>)
+                .map_err(|error| format!("failed to create About menu item: {error}"))?;
         let exit_item = MenuItem::with_id(app, MENU_EXIT_ID, "Exit", true, None::<&str>)
             .map_err(|error| format!("failed to create Exit menu item: {error}"))?;
 
@@ -360,6 +389,7 @@ impl ApplicationController {
                 &session_toggle_item,
                 &clear_item,
                 &open_settings_item,
+                &open_about_item,
                 &separator_2,
                 &exit_item,
             ],
@@ -439,6 +469,11 @@ impl ApplicationController {
             MENU_OPEN_SETTINGS_ID => {
                 if let Err(error) = self.open_settings(app) {
                     logging::log_backend(&format!("tray: failed to open settings: {error}"));
+                }
+            }
+            MENU_OPEN_ABOUT_ID => {
+                if let Err(error) = self.open_main_window_route(app, "about", "About ScreenScribble", 560.0, 460.0) {
+                    logging::log_backend(&format!("tray: failed to open about window: {error}"));
                 }
             }
             MENU_EXIT_ID => self.shutdown(app),

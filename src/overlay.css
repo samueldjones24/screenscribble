@@ -55,17 +55,17 @@ body.overlay-window .overlay-app {
   top: 16px;
   left: 16px;
   padding: 8px 12px;
-  background: rgba(50, 14, 59, 0.92);
-  color: #ddfbd2;
+  background: rgba(9, 9, 11, 0.94);
+  color: #fefce8;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.3px;
   border-radius: 8px;
-  border: 1px solid rgba(107, 127, 215, 0.8);
+  border: 1px solid #facc15;
   pointer-events: none;
   z-index: 10000;
   opacity: 1;
-  box-shadow: 0 10px 28px rgba(50, 14, 59, 0.35);
+  box-shadow: 0 10px 28px rgba(250, 204, 21, 0.18);
 }
 
 @keyframes overlayNotificationFade {

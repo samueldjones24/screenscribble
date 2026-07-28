@@ -206,6 +206,62 @@ body.control-window #app {
   color: var(--color-text-primary);
 }
 
+.dialog-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.dialog-card {
+  width: min(560px, 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-panel-bg);
+  box-shadow: var(--shadow-panel);
+  padding: 1.1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.dialog-card h1 {
+  margin: 0;
+}
+
+.dialog-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 0.45rem 0.8rem;
+  margin: 0;
+}
+
+.about-grid dt {
+  color: var(--color-text-subtle);
+}
+
+.about-grid dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.about-grid a {
+  color: var(--color-state-enabled);
+}
+
 @media (max-width: 760px) {
   .control-shell {
     padding: 0.75rem;
@@ -223,5 +279,9 @@ body.control-window #app {
 
   .status-strip {
     width: fit-content;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
   }
 }

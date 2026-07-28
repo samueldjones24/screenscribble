@@ -11,6 +11,7 @@ export interface SettingsService {
   initialize: () => Promise<ApplicationSettings>;
   getSettings: () => ApplicationSettings;
   save: (settings: ApplicationSettings) => Promise<ApplicationSettings>;
+  markFirstRunComplete: () => Promise<ApplicationSettings>;
   subscribe: (listener: (settings: ApplicationSettings) => void) => () => void;
   dispose: () => void;
 }
@@ -54,18 +55,30 @@ export function createSettingsService(): SettingsService {
     return settings;
   };
 
+  const persistSettings = async (nextSettings: ApplicationSettings): Promise<ApplicationSettings> => {
+    const normalized = validateAndNormalizeSettings(nextSettings).settings;
+    try {
+      const saved = await invoke<ApplicationSettings>('save_settings', { settings: normalized });
+      return setSettings(saved);
+    } catch (error) {
+      log('error', `Failed to save settings: ${String(error)}`);
+      return settings;
+    }
+  };
+
   return {
     initialize,
     getSettings: () => settings,
-    save: async (nextSettings) => {
-      const normalized = validateAndNormalizeSettings(nextSettings).settings;
-      try {
-        const saved = await invoke<ApplicationSettings>('save_settings', { settings: normalized });
-        return setSettings(saved);
-      } catch (error) {
-        log('error', `Failed to save settings: ${String(error)}`);
-        return settings;
-      }
+    save: persistSettings,
+    markFirstRunComplete: async () => {
+      const nextSettings: ApplicationSettings = {
+        ...settings,
+        general: {
+          ...settings.general,
+          firstRunCompleted: true,
+        },
+      };
+      return persistSettings(nextSettings);
     },
     subscribe: (listener) => {
       listeners.add(listener);

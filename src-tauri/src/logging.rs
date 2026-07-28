@@ -1,6 +1,6 @@
-pub fn log_backend(message: &str) {
+pub fn log_backend(_message: &str) {
     #[cfg(debug_assertions)]
     {
-        println!("[backend] {message}");
+        println!("[backend] {_message}");
     }
 }

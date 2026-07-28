@@ -2,6 +2,18 @@
 name = "screenscribble"
 version = "0.1.0"
 edition = "2021"
+description = "Transient desktop annotation overlay for demos, meetings, and screenshots."
+license = "MIT"
+repository = "https://github.com/screenscribble/screenscribble"
+homepage = "https://screenscribble.app"
+authors = ["ScreenScribble"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

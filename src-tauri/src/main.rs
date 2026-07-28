@@ -101,6 +101,24 @@ fn get_diagnostics() -> diagnostics::ApplicationDiagnostics {
     diagnostics::collect_diagnostics()
 }
 
+#[command]
+fn get_release_metadata() -> diagnostics::ReleaseMetadata {
+    diagnostics::collect_release_metadata()
+}
+
+#[command]
+fn mark_first_run_complete(
+    app: tauri::AppHandle,
+    controller_state: tauri::State<'_, AppControllerState>,
+) -> settings::ApplicationSettings {
+    let mut next = settings::load_settings(&app);
+    next.general.first_run_completed = true;
+    let saved = settings::save_settings(&app, next);
+    settings::emit_settings_updated(&app, &saved);
+    controller_state.with_mut(|controller| controller.sync_from_settings(&app, &saved));
+    saved
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(AppControllerState::new())
@@ -135,6 +153,18 @@ fn main() {
                 {
                     return Err(std::io::Error::new(std::io::ErrorKind::Other, error).into());
                 }
+
+                if !startup_settings.general.first_run_completed {
+                    let _ = controller_state.with_mut(|controller| {
+                        controller.open_main_window_route(
+                            &app.handle(),
+                            "welcome",
+                            "Welcome to ScreenScribble",
+                            640.0,
+                            420.0,
+                        )
+                    });
+                }
             }
 
             let handle = app.handle();
@@ -165,8 +195,10 @@ fn main() {
             load_settings,
             save_settings,
             open_settings_window,
+            mark_first_run_complete,
             sync_input_state,
-            get_diagnostics
+            get_diagnostics,
+            get_release_metadata
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|error| eprintln!("error while running tauri application: {error}"));

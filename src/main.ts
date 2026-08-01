@@ -259,7 +259,6 @@ if (app) {
     });
   } else {
     document.body.classList.add('control-window');
-    const isWelcomeView = forcedView === 'welcome';
     const isAboutView = forcedView === 'about';
 
     const loadReleaseMetadata = async (): Promise<ReleaseMetadata> => {
@@ -282,39 +281,7 @@ if (app) {
       }
     };
 
-    if (isWelcomeView) {
-      app.innerHTML = `
-        <main class="dialog-shell">
-          <section class="dialog-card" aria-label="Welcome dialog">
-            <h1>Welcome to ScreenScribble</h1>
-            <p>Runs quietly from your system tray.</p>
-            <p>Press <strong>Ctrl + Alt + D</strong> to enter Draw Mode.</p>
-            <footer class="dialog-actions">
-              <button id="welcome-open-settings" class="control-button" type="button">Open Settings</button>
-              <button id="welcome-close" class="control-button" type="button">Close</button>
-            </footer>
-          </section>
-        </main>
-      `;
-
-      const completeFirstRun = async (): Promise<void> => {
-        await invoke('mark_first_run_complete');
-      };
-
-      const openSettingsButton = document.querySelector<HTMLButtonElement>('#welcome-open-settings');
-      const closeButton = document.querySelector<HTMLButtonElement>('#welcome-close');
-
-      openSettingsButton?.addEventListener('click', async () => {
-        await invoke('open_settings_window');
-        await completeFirstRun();
-        await currentWindow.hide();
-      });
-
-      closeButton?.addEventListener('click', async () => {
-        await completeFirstRun();
-        await currentWindow.hide();
-      });
-    } else if (isAboutView) {
+    if (isAboutView) {
       app.innerHTML = `
         <main class="dialog-shell">
           <section class="dialog-card" aria-label="About dialog">

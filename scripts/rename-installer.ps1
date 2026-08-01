@@ -29,6 +29,10 @@ if (-not $installer) {
 }
 
 $stablePath = Join-Path $installer.DirectoryName 'ScreenScribble-Setup.exe'
-Copy-Item -Path $installer.FullName -Destination $stablePath -Force
+if (Test-Path $stablePath) {
+  Remove-Item -Path $stablePath -Force
+}
 
-Write-Host "Created stable installer alias: $stablePath"
+Move-Item -Path $installer.FullName -Destination $stablePath -Force
+
+Write-Host "Renamed installer to stable filename: $stablePath"

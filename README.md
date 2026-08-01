@@ -12,10 +12,22 @@ Current release candidate: **0.1.0**
 
 ### Windows installer
 
-1. Download either `ScreenScribble-Setup.exe` (stable filename) or `ScreenScribble_<version>_x64-setup.exe` from the GitHub Releases page.
+1. Download `ScreenScribble-Setup.exe` from the GitHub Releases page.
 2. Run the installer.
 3. Complete setup. ScreenScribble starts after installation.
 4. Find ScreenScribble in the Start Menu and system tray.
+
+### User install experience
+
+From a user perspective, setup looks like this:
+
+1. Click Download on the website or download the installer from GitHub Releases.
+2. Open the installer and confirm any Windows security prompt.
+3. Let ScreenScribble install for the current Windows user.
+4. If WebView2 is not already installed, let the installer fetch it automatically.
+5. Finish setup and allow ScreenScribble to launch.
+6. ScreenScribble starts in the background and appears in the system tray.
+7. Open Settings or About from the tray menu when needed, or press `Ctrl + Alt + D` to toggle Draw Mode.
 
 ### Uninstall
 
@@ -38,17 +50,11 @@ Default shortcuts:
 
 You can change shortcuts in Settings.
 
-## First Run Experience
+## Startup Experience
 
-On first launch, ScreenScribble shows a welcome dialog once.
+After installation, ScreenScribble starts and runs from the system tray.
 
-It includes:
-
-- Quick usage guidance
-- The default Draw Mode shortcut
-- A direct button to open Settings
-
-After dismissal, it is not shown again.
+Open Settings or About from the tray menu when needed.
 
 ## Known Limitations
 

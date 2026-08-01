@@ -11,7 +11,6 @@ export interface SettingsService {
   initialize: () => Promise<ApplicationSettings>;
   getSettings: () => ApplicationSettings;
   save: (settings: ApplicationSettings) => Promise<ApplicationSettings>;
-  markFirstRunComplete: () => Promise<ApplicationSettings>;
   subscribe: (listener: (settings: ApplicationSettings) => void) => () => void;
   dispose: () => void;
 }
@@ -70,16 +69,6 @@ export function createSettingsService(): SettingsService {
     initialize,
     getSettings: () => settings,
     save: persistSettings,
-    markFirstRunComplete: async () => {
-      const nextSettings: ApplicationSettings = {
-        ...settings,
-        general: {
-          ...settings.general,
-          firstRunCompleted: true,
-        },
-      };
-      return persistSettings(nextSettings);
-    },
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

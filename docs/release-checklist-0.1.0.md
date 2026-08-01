@@ -23,10 +23,9 @@
 
 ## Runtime Validation
 
-- [ ] First launch shows welcome dialog once
-- [ ] "Open Settings" from welcome opens settings window
-- [ ] Closing welcome dialog suppresses it for subsequent launches
 - [ ] App appears in system tray after startup
+- [ ] No unexpected foreground window appears on startup
+- [ ] Settings opens correctly from the tray menu
 - [ ] Draw Mode toggle works (`Ctrl + Alt + D`)
 - [ ] Drawing works and fades according to settings
 - [ ] Settings persist across app restart
@@ -45,6 +44,6 @@
 - [ ] Release title: `ScreenScribble 0.1.0`
 - [ ] CHANGELOG section copied to release notes
 - [ ] Attach installer asset(s):
-  - [ ] `ScreenScribble_0.1.0_x64-setup.exe`
+  - [ ] `ScreenScribble-Setup.exe`
 - [ ] Optional checksums attached
 - [ ] Publish release

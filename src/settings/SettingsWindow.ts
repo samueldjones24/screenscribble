@@ -199,7 +199,6 @@ export function mountSettingsWindow(options: { root: HTMLElement; settingsServic
       shortcuts: { ...current.shortcuts, ...editedShortcuts },
       general: {
         launchAtStartup: (form.elements.namedItem('general-launch-startup') as HTMLInputElement).checked,
-        firstRunCompleted: current.general.firstRunCompleted,
       },
     };
   };

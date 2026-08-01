@@ -8,7 +8,6 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 
-- First-run welcome dialog that is shown once and persisted in user settings.
 - About dialog view with application version, build number, website, GitHub, and license.
 - NSIS installer hook to launch the application after installation.
 - Release metadata endpoint for frontend About and release documentation.
@@ -25,6 +24,6 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Fixed
 
-- Settings model parity between frontend and backend for first-run completion persistence.
+- Settings model parity between frontend and backend for persisted application settings.
 
 [0.1.0]: https://github.com/screenscribble/screenscribble/releases/tag/v0.1.0

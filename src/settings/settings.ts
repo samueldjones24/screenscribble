@@ -26,7 +26,6 @@ export interface ShortcutsSettings {
 
 export interface GeneralSettings {
   launchAtStartup: boolean;
-  firstRunCompleted: boolean;
 }
 
 export interface ApplicationSettings {
@@ -58,7 +57,6 @@ export const DEFAULT_SETTINGS: ApplicationSettings = Object.freeze({
   },
   general: {
     launchAtStartup: false,
-    firstRunCompleted: false,
   },
 });
 
@@ -133,7 +131,6 @@ export function validateAndNormalizeSettings(input: ApplicationSettings): Settin
     shortcuts: input.shortcuts ?? DEFAULT_SETTINGS.shortcuts,
     general: {
       launchAtStartup: Boolean(input.general.launchAtStartup),
-      firstRunCompleted: Boolean(input.general.firstRunCompleted),
     },
   };
 

@@ -66,7 +66,6 @@ impl Default for ShortcutsSettings {
 #[serde(rename_all = "camelCase")]
 pub struct GeneralSettings {
     pub launch_at_startup: bool,
-    pub first_run_completed: bool,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -106,7 +105,6 @@ struct PartialShortcutsSettings {
 #[serde(rename_all = "camelCase")]
 struct PartialGeneralSettings {
     launch_at_startup: Option<bool>,
-    first_run_completed: Option<bool>,
 }
 
 fn default_settings() -> ApplicationSettings {
@@ -126,7 +124,6 @@ fn default_settings() -> ApplicationSettings {
         shortcuts: ShortcutsSettings::default(),
         general: GeneralSettings {
             launch_at_startup: false,
-            first_run_completed: false,
         },
     }
 }
@@ -170,7 +167,6 @@ fn normalize_settings(settings: ApplicationSettings) -> ApplicationSettings {
         shortcuts: settings.shortcuts,
         general: GeneralSettings {
             launch_at_startup: settings.general.launch_at_startup,
-            first_run_completed: settings.general.first_run_completed,
         },
     }
 }
@@ -214,9 +210,6 @@ fn merge_partial_settings(partial: PartialApplicationSettings) -> ApplicationSet
             launch_at_startup: general_partial
                 .launch_at_startup
                 .unwrap_or(defaults.general.launch_at_startup),
-            first_run_completed: general_partial
-                .first_run_completed
-                .unwrap_or(defaults.general.first_run_completed),
         },
     })
 }

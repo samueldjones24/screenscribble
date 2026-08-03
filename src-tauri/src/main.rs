@@ -106,6 +106,11 @@ fn get_release_metadata() -> diagnostics::ReleaseMetadata {
     diagnostics::collect_release_metadata()
 }
 
+#[command]
+fn open_external_url(url: String) -> Result<(), String> {
+    webbrowser::open(&url).map_err(|error| format!("failed to open url: {error}"))
+}
+
 fn main() {
     tauri::Builder::default()
         .manage(AppControllerState::new())
@@ -172,7 +177,8 @@ fn main() {
             open_settings_window,
             sync_input_state,
             get_diagnostics,
-            get_release_metadata
+            get_release_metadata,
+            open_external_url
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|error| eprintln!("error while running tauri application: {error}"));

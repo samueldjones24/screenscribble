@@ -282,25 +282,32 @@ if (app) {
     };
 
     if (isAboutView) {
+      document.body.classList.remove('control-window');
+      document.body.classList.add('settings-window');
+      void import('./settings/settings.css');
+
       app.innerHTML = `
-        <main class="dialog-shell">
-          <section class="dialog-card" aria-label="About dialog">
+        <main class="settings-shell about-shell">
+          <header class="settings-header">
             <h1>About ScreenScribble</h1>
-            <dl class="about-grid">
-              <dt>Version</dt>
-              <dd id="about-version">Loading…</dd>
-              <dt>Build</dt>
-              <dd id="about-build">Loading…</dd>
-              <dt>Website</dt>
-              <dd><a id="about-website" href="#" rel="noreferrer">Loading…</a></dd>
-              <dt>GitHub</dt>
-              <dd><a id="about-github" href="#" rel="noreferrer">Loading…</a></dd>
-              <dt>License</dt>
-              <dd id="about-license">Loading…</dd>
+            <p>Transient desktop annotation overlay for demos, meetings, and screenshots.</p>
+          </header>
+
+          <section class="settings-section about-section" aria-label="Product information">
+            <dl class="about-meta-grid">
+              <div class="about-meta-row">
+                <dt>Version</dt>
+                <dd id="about-version">Loading…</dd>
+              </div>
+              <div class="about-meta-row">
+                <dt>Build</dt>
+                <dd id="about-build">Loading…</dd>
+              </div>
+              <div class="about-meta-row">
+                <dt>Website</dt>
+                <dd><a id="about-website" href="#" rel="noreferrer">Loading…</a></dd>
+              </div>
             </dl>
-            <footer class="dialog-actions">
-              <button id="about-close" class="control-button" type="button">Close</button>
-            </footer>
           </section>
         </main>
       `;
@@ -309,8 +316,6 @@ if (app) {
         const versionNode = document.querySelector<HTMLElement>('#about-version');
         const buildNode = document.querySelector<HTMLElement>('#about-build');
         const websiteNode = document.querySelector<HTMLAnchorElement>('#about-website');
-        const githubNode = document.querySelector<HTMLAnchorElement>('#about-github');
-        const licenseNode = document.querySelector<HTMLElement>('#about-license');
 
         if (versionNode) {
           versionNode.textContent = metadata.version;
@@ -321,18 +326,11 @@ if (app) {
         if (websiteNode) {
           websiteNode.textContent = metadata.website;
           websiteNode.href = metadata.website;
+          websiteNode.addEventListener('click', async (event) => {
+            event.preventDefault();
+            await invoke('open_external_url', { url: metadata.website });
+          });
         }
-        if (githubNode) {
-          githubNode.textContent = metadata.repositoryUrl;
-          githubNode.href = metadata.repositoryUrl;
-        }
-        if (licenseNode) {
-          licenseNode.textContent = metadata.license;
-        }
-      });
-
-      document.querySelector<HTMLButtonElement>('#about-close')?.addEventListener('click', async () => {
-        await currentWindow.hide();
       });
     } else {
       app.innerHTML = `

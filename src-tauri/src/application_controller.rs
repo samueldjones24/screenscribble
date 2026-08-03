@@ -269,7 +269,9 @@ impl ApplicationController {
         };
 
         let route_literal = route.replace('\\', "\\\\").replace('\'', "\\'");
-        let script = format!("window.location.hash = '{route_literal}';");
+        let script = format!(
+            "window.location.hash = '{route_literal}'; window.location.reload();"
+        );
         let _ = window.eval(&script);
 
         let _ = window.set_title(title);
